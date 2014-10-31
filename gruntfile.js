@@ -10,14 +10,32 @@ module.exports = function(grunt){
 			options: {
 				livereload:true
 			},
-			html: {
-				files: [
-					'app/src/**/*.html'
-				]
-			},
 			config: {
 				files: [
 					'gruntfile.js'
+				]
+			},
+			html: {
+				files: [
+					'src/index.html'
+				]
+			},
+			tpl: {
+				files: [
+					'src/**/*.tpl.html',
+					'src/js/**/*.js'
+				],
+				tasks: [
+					'includeSource'
+				]
+
+			},
+			bower: {
+				files: [
+					'src/vendor/**/.bower.json'
+				],
+				tasks: [
+					'wiredep'
 				]
 			}
 		},
@@ -32,7 +50,26 @@ module.exports = function(grunt){
 				options: {
 					port: 8000,
 					hostname: 'localhost',
-					base: 'app/src'
+					base: 'src'
+				}
+			}
+		},
+
+		wiredep: {
+			index: {
+				src: [
+					'src/index.tpl.html'
+				]
+			}
+		},
+
+		includeSource: {
+			options: {
+				basePath: 'src'
+			},
+			app: {
+				files: {
+					'src/index.html':'src/index.tpl.html'
 				}
 			}
 		}
@@ -40,9 +77,12 @@ module.exports = function(grunt){
 	});
 
 	grunt.registerTask('default',[
+		'wiredep'
 	]);
 
 	grunt.registerTask('serve',[
+		'includeSource',
+		'wiredep',
 		'connect',
 		'watch'
 
